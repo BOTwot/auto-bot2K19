@@ -1,2 +1,3 @@
-# auto-bot2K19
-test
+# Automatic Leg Robot Mechanism
+
+Servo Test
