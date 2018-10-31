@@ -1,23 +1,13 @@
 #include <Servo.h>
-
-#define limitlow 1300
-#define limithigh 1700
-
 Servo myservo[8];  // create servo object to control a servo
 
-enum servos {
-  leftShoulder1 = 2,
-  leftShoulder2 = 3,
-  rightShoulder1 = 4,
-  rightShoulder2 = 5,
-  leftKnee1 = 6,
-  leftKnee2 = 7,
-  rightKnee1 = 8,
-  rightKnee2 = 9
-};
-
+#define MIN 544
+#define MAX 2000
+#define MID (((MAX-MIN)/2)+MIN)
+#define angleTo_us(x) map(x,-90,90,MIN,MAX)
+#define setAngle(y) writeMicroseconds(angleTo_us(x))
 void leg1X() {
-  myservo[0].writeMicroseconds(1200);
+  myservo[0].setAngle(0);
   delay(500);
   myservo[1].writeMicroseconds(1700);
   delay(500);
@@ -41,19 +31,6 @@ void setup() {
 }
 
 void loop() {
-  //To walk
-  //  stand();
-  //  delay(500);
-  //  leg1X();
-  //  delay(500);
-
-#define MIN 544
-#define MAX 2000
-#define MID (((MAX-MIN)/2)+MIN)
-
-#define angleTo_us(x) map(x,-90,90,MIN,MAX)
-
-
   myservo[3].writeMicroseconds(angleTo_us(-90));
   delay(2000);
   
@@ -63,4 +40,3 @@ void loop() {
   myservo[3].writeMicroseconds(angleTo_us(90));
   delay(2000);
 }
-
