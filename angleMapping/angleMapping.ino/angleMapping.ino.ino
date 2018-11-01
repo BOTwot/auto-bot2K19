@@ -63,13 +63,13 @@ void diagonal2_low() {
 void loop() {
   //To walk
   stand();
+  delay(dly);/
+  diagonal1_up();
   delay(dly);
-//  diagonal1_up();
-//  delay(dly);
-//  diagonal1_low();
-//  delay(dly);
-//  diagonal2_up();
-//  delay(dly);
-//  diagonal2_low();
-//  delay(dly);
+  diagonal1_low();
+  delay(dly);
+  diagonal2_up();
+  delay(dly);
+  diagonal2_low();
+  delay(dly);
 }
