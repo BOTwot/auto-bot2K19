@@ -1,5 +1,13 @@
 #include <Servo.h>
 
+//These 4 lines must be after servo library include
+#ifdef REFRESH_INTERVAL
+#undef REFRESH_INTERVAL
+#define REFRESH_INTERVAL 10000L
+#endif
+
+// Tested to compile, not physically with O'Scope 
+
 Servo myservo[8];  // create servo object to control a servo
 
 #define MIN 1000
