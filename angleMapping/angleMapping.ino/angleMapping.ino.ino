@@ -20,23 +20,24 @@ void setup() {
   for (int i = 0; i < 8 ; i++) {
     myservo[i].attach( (i + 2) ); // attaches the servo on pin 9 to the servo object
   }
-
+  stand();
+  delay(3000);
 }
 
 void diagonal1_up() {
   myservo[1].writeMicroseconds(angleTo_us(0));
   myservo[3].writeMicroseconds(angleTo_us(0));
   delay(dly);
-  myservo[0].writeMicroseconds(angleTo_us(22));
-  myservo[2].writeMicroseconds(angleTo_us(-22));
+  myservo[0].writeMicroseconds(angleTo_us(0));
+  myservo[2].writeMicroseconds(angleTo_us(0));
 }
 
 void diagonal1_low() {
   myservo[3].writeMicroseconds(angleTo_us(67));
   myservo[1].writeMicroseconds(angleTo_us(-67));
   delay(dly);
-  myservo[0].writeMicroseconds(angleTo_us(0));
-  myservo[2].writeMicroseconds(angleTo_us(0));
+  myservo[0].writeMicroseconds(angleTo_us(-40));
+  myservo[2].writeMicroseconds(angleTo_us(40));
   //delay(200);
   myservo[1].writeMicroseconds(angleTo_us(0));
   myservo[3].writeMicroseconds(angleTo_us(0));
@@ -47,16 +48,16 @@ void diagonal2_up() {
   myservo[5].writeMicroseconds(angleTo_us(0));
   myservo[7].writeMicroseconds(angleTo_us(0));
   delay(dly);
-  myservo[4].writeMicroseconds(angleTo_us(-22));
-  myservo[6].writeMicroseconds(angleTo_us(22));
+  myservo[4].writeMicroseconds(angleTo_us(0));
+  myservo[6].writeMicroseconds(angleTo_us(0));
 }
 
 void diagonal2_low() {
   myservo[5].writeMicroseconds(angleTo_us(67));
   myservo[7].writeMicroseconds(angleTo_us(-67));
   delay(dly);
-  myservo[4].writeMicroseconds(angleTo_us(0));
-  myservo[6].writeMicroseconds(angleTo_us(0));
+  myservo[4].writeMicroseconds(angleTo_us(40));
+  myservo[6].writeMicroseconds(angleTo_us(-40));
   //delay(200);
   myservo[5].writeMicroseconds(angleTo_us(0));
   myservo[7].writeMicroseconds(angleTo_us(0));
@@ -64,14 +65,16 @@ void diagonal2_low() {
 
 void loop() {
   //To walk
-  stand();
-  delay(dly);
-      diagonal1_up();
-      delay(dly);
-      diagonal1_low();
-      delay(dly);
-      diagonal2_up();
-      delay(dly);
-      diagonal2_low();
-      delay(dly);
+//  stand();
+//  delay(dly);
+
+    diagonal2_low();
+    delay(dly);
+    diagonal2_up();
+    delay(dly);
+    diagonal1_low();
+    delay(dly);
+    diagonal1_up();
+    delay(dly);
+
 }
