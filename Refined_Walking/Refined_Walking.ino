@@ -6,8 +6,8 @@ Servo myservo[8];   // create servo object to control a servo
 #define MAX 2000
 #define MID (((MAX-MIN)/2)+MIN)
 #define angleTo_us(x) map(x,-90,90,MIN,MAX)
-#define x 90  //assumes angles for now
-#define y 50
+#define x 50  //assumes angles for now
+#define y 20
 #define dly 200
 #define initial 0
 #define WalkPin 10
@@ -75,19 +75,19 @@ void walk() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-  if (digitalRead(WalkPin) == LOW)
-  {
-    if (flag == 1)
-      {
-        delay(4000);
-        flag=0;
-      }
-      walk();
-  }
-  else
-  {
-    cycle5();
-    flag=1;
-  }
-
+//  if (digitalRead(WalkPin) == LOW)
+//  {
+//    if (flag == 1)
+//      {
+//        delay(4000);
+//        flag=0;
+//      }
+//      walk();
+//  }
+//  else
+//  {
+//    cycle5();
+//    flag=1;
+//  }
+walk();
 }
