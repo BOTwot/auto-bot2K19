@@ -6,9 +6,9 @@ Servo myservo[8];   // create servo object to control a servo
 #define MAX 2000
 #define MID (((MAX-MIN)/2)+MIN)
 #define angleTo_us(x) map(x,-90,90,MIN,MAX)
-#define x_len 90  //assumes angles for now
+#define x_len 50  //assumes angles for now
 #define y_len 50
-#define dly 200
+#define dly 600
 #define init 0
 
 void stand() {
@@ -43,11 +43,12 @@ void setup() {
     myservo[i].attach( (i + 2) ); //attach servo  2 to 9
   }
   stand();
-  delay(30000);
+  delay(3000);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  walk(x_len, y_len);
+ // walk(x_len, y_len);
+stand();
   delay(dly);
 }

@@ -1,10 +1,10 @@
 #include <Servo.h>
 
 //These 4 lines must be after servo library include
-#ifdef REFRESH_INTERVAL
-#undef REFRESH_INTERVAL
-#define REFRESH_INTERVAL 10000L
-#endif
+//#ifdef REFRESH_INTERVAL
+//#undef REFRESH_INTERVAL
+//#define REFRESH_INTERVAL 10000L
+//#endif
 
 // Tested to compile, not physically with O'Scope 
 
@@ -73,16 +73,16 @@ void diagonal2_low() {
 
 void loop() {
   //To walk
-//  stand();
-//  delay(dly);
+  stand();
+  delay(dly);
 
-    diagonal2_low();
-    delay(dly);
-    diagonal2_up();
-    delay(dly);
-    diagonal1_low();
-    delay(dly);
-    diagonal1_up();
-    delay(dly);
+//    diagonal2_low();
+//    delay(dly);
+//    diagonal2_up();
+//    delay(dly);
+//    diagonal1_low();
+//    delay(dly);
+//    diagonal1_up();
+//    delay(dly);
 
 }
