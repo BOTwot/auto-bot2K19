@@ -6,24 +6,31 @@ Servo myservo[8];   // create servo object to control a servo
 #define MAX 2000
 #define MID (((MAX-MIN)/2)+MIN)
 #define angleTo_us(x) map(x,-90,90,MIN,MAX)
-#define x 50  //assumes angles for now
-#define y 20
+#define writeAngle(e) writeMicroseconds(angleTo_us(e))
+#define x 60  //assumes angles for now
+#define y 40
 #define dly 200
-#define initial 0
+#define initial -10
 #define WalkPin 10
 int flag = 0;
+int corr[8]={0,0,0,-15,0,0,15,25};
+void stand() {
+  cycle5();
+}
 
 void setup() {
   for (int i = 0; i < 8 ; i++) {
     myservo[i].attach( (i + 2) ); //attach servo  2 to 9
   }
-  Serial.begin(9600);
+  //  Serial.begin(9600);
   pinMode(WalkPin, INPUT_PULLUP);
+    stand();
+    delay(3000);
 }
 void writeser(int a, int b, int ang1, int ang2)
 {
-  myservo[a].writeMicroseconds(angleTo_us(ang1));
-  myservo[b].writeMicroseconds(angleTo_us(ang2));
+  myservo[a].writeMicroseconds(angleTo_us(ang1+corr[a]));
+  myservo[b].writeMicroseconds(angleTo_us(ang2+corr[b]));
 }
 
 void cycle1()
@@ -42,8 +49,8 @@ void cycle2()
 }
 void cycle3()
 {
-  writeser(1, 0, -initial, -y / 2);
-  writeser(3, 2, initial, y);
+  writeser(1, 0, 70, -10);
+  writeser(3, 2, initial, y / 2);
   writeser(5, 4, x, initial);
   writeser(7, 6, -x, -y);
 }
@@ -59,7 +66,7 @@ void cycle5()//stand
   writeser(1, 0, -x, -initial);
   writeser(3, 2, initial, initial);
   writeser(5, 4, initial, y);
-  writeser(7, 6, -initial, -y / 2);
+  writeser(7, 6, initial, -y / 2);
 }
 void walk() {
   cycle1();
@@ -75,19 +82,21 @@ void walk() {
 }
 void loop() {
   // put your main code here, to run repeatedly:
-//  if (digitalRead(WalkPin) == LOW)
-//  {
-//    if (flag == 1)
-//      {
-//        delay(4000);
-//        flag=0;
-//      }
-//      walk();
-//  }
-//  else
-//  {
-//    cycle5();
-//    flag=1;
-//  }
-walk();
+  //  if (digitalRead(WalkPin) == LOW)
+  //  {
+  //    if (flag == 1)
+  //      {
+  //        delay(4000);
+  //        flag=0;
+  //      }
+  //      walk();
+  //  }
+  //  else
+  //  {
+  //    cycle5();
+  //    flag=1;
+  //  }
+  walk();
+//  stand();
+//  delay(dly);
 }
