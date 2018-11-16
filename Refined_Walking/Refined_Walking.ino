@@ -13,7 +13,7 @@ Servo myservo[8];   // create servo object to control a servo
 #define initial -10
 #define WalkPin 10
 int flag = 0;
-int corr[8]={0,0,0,-15,0,0,15,25};
+int corr[8] = {0, 0, 0, -15, 0, 0, 15, 25};
 void stand() {
   cycle5();
 }
@@ -24,13 +24,14 @@ void setup() {
   }
   //  Serial.begin(9600);
   pinMode(WalkPin, INPUT_PULLUP);
-    stand();
-    delay(3000);
+  stand();
+  delay(3000);
 }
+
 void writeser(int a, int b, int ang1, int ang2)
 {
-  myservo[a].writeMicroseconds(angleTo_us(ang1+corr[a]));
-  myservo[b].writeMicroseconds(angleTo_us(ang2+corr[b]));
+  myservo[a].writeMicroseconds(angleTo_us(ang1 + corr[a]));
+  myservo[b].writeMicroseconds(angleTo_us(ang2 + corr[b]));
 }
 
 void cycle1()
@@ -96,7 +97,7 @@ void loop() {
   //    cycle5();
   //    flag=1;
   //  }
-  walk();
-//  stand();
-//  delay(dly);
+//  walk();
+      stand();
+      delay(dly);
 }
