@@ -13,7 +13,7 @@ Servo myservo[8];   // create servo object to control a servo
 #define initial -10
 #define WalkPin 10
 int flag = 0;
-int corr[8] = {0, 0, 0, -15, 0, 0, 15, 25};
+int corr[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 void stand() {
   cycle5();
 }
@@ -50,8 +50,8 @@ void cycle2()
 }
 void cycle3()
 {
-  writeser(1, 0, 70, -10);
-  writeser(3, 2, initial, y / 2);
+  writeser(1, 0, -initial, -y/2);
+  writeser(3, 2, initial, y);
   writeser(5, 4, x, initial);
   writeser(7, 6, -x, -y);
 }
