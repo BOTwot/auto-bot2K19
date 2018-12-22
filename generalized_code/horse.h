@@ -13,6 +13,13 @@ private:
 public:
     Servo servoS;
     Servo servoE;
+    horse(int pintoS,int pintoE)
+    {
+        servoS.attach(pintoS);
+        servoE.attach(pintoE);
+        corrS=0.0;
+        corrE=0.0;
+    }
     horse(int pintoS,int valS,int pintoE,int valE)
     {
         servoS.attach(pintoS);
