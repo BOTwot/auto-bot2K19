@@ -6,7 +6,7 @@
 
 #define REFRESH_INTERVAL 50000L
 
-horse flleg(2,0,3,0),frleg(4,0,5,0),blleg(6,0,7,0),brleg(8,0,9,0);   // create leg object to control it; arbitrary pin nos,change acc to bot
+horse flleg(2,3),frleg(4,5),blleg(6,7),brleg(8,9);   // create leg object to control it; arbitrary pin nos,change acc to bot
 
 #define MIN 1000
 #define MAX 2000
