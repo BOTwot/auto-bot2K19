@@ -1,6 +1,7 @@
 #include <PinChangeInt.h>
-
 #include "AutoPID.h"
+#include <Servo.h>
+#include "horse.h"
 class encoder                 //class definition ends at line 37
 {
     int a, b,angle;
@@ -39,7 +40,8 @@ void encoder::updateang()
   angle = map(op,-800,800,-360,360);
 }
 int a = 2, b = 3, c = 4, d = 5, e = 6, f = 7, g = 8, h = 9;
-encoder flleg(a, b), frleg(c, d), blleg(e, f), brleg(g, h);
+encoder flknee(a, b), frknee(c, d), blknee(e, f), brknee(g, h);
+horse flleg(2,3),frleg(4,5),blleg(6,7),brleg(8,9);
 void setup()
 {
   pinMode(a,INPUT_PULLUP);
@@ -60,34 +62,18 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(h), brdoB, CHANGE);
   Serial.begin(2000000);
 }
-void fldoA() {
-  flleg.doA();
-}
-void fldoB() {
-  flleg.doB();
-}
-void frdoA() {
-  frleg.doA();
-}
-void frdoB() {
-  frleg.doB();
-}
-void bldoA() {
-  blleg.doA();
-}
-void bldoB() {
-  blleg.doB();
-}
-void brdoA() {
-  brleg.doA();
-}
-void brdoB() {
-  brleg.doB();
-}
+void fldoA() {flknee.doA();}
+void fldoB() {flknee.doB();}
+void frdoA() {frknee.doA();}
+void frdoB() {frknee.doB();}
+void bldoA() {blknee.doA();}
+void bldoB() {blknee.doB();}
+void brdoA() {brknee.doA();}
+void brdoB() {brknee.doB();}
 void loop()
 {
-  flleg.updateang();
-  frleg.updateang();
-  blleg.updateang();
-  brleg.updateang();
+  flknee.updateang();
+  frknee.updateang();
+  blknee.updateang();
+  brknee.updateang();
 }
