@@ -1,6 +1,10 @@
 #include <PinChangeInt.h>
 #include "AutoPID.h"
 #include<Servo.h>
+int curangle = 0, setangle = 0;
+uint8_t stmax = 100, stmin = 0;    //Variables for min and max adjust pwm
+double stkp = 14, stki = 0.00017, stkd = 295;    //Kp,Ki,Kd for AutoPID Lib
+int out1, out2;
 class horse
 {
     float corrS, corrE;
@@ -34,18 +38,19 @@ class horse
 };
 class encoder                 //class definition ends at line 37
 {
-    int a, b, angle;
-  public:
+   int a, b, angle;
+  public:     
     volatile int op = 0;
-    encoder(int, int);
+    encoder(int, int,AutoPID &mypid);
     void doA();
     void doB();
     void updateang();
 };
-encoder::encoder(int x, int y)
+encoder::encoder(int x, int y, AutoPID &mypid)
 {
   a = x;
   b = y;
+  mypid.run();
 }
 void encoder::doA()
 {
@@ -70,10 +75,15 @@ void encoder::updateang()
   angle = map(op, -800, 800, -360, 360);
 }
 int a = 2, b = 3, c = 4, d = 5, e = 6, f = 7, g = 8, h = 9;
-encoder flknee(a, b), frknee(c, d), blknee(e, f), brknee(g, h);
+AutoPID pid_flknee(&curangle, &setangle, &out1, &out2, stmin, stmax, stkp, stki, stkd); 
+AutoPID pid_frknee(&curangle, &setangle, &out1, &out2, stmin, stmax, stkp, stki, stkd); 
+AutoPID pid_blknee(&curangle, &setangle, &out1, &out2, stmin, stmax, stkp, stki, stkd); 
+AutoPID pid_brknee(&curangle, &setangle, &out1, &out2, stmin, stmax, stkp, stki, stkd); 
+encoder flknee(a, b,pid_flknee), frknee(c, d,pid_frknee), blknee(e, f,pid_blknee), brknee(g, h,pid_brknee);
 horse flleg(2, 3), frleg(4, 5), blleg(6, 7), brleg(8, 9);
 void setup()
 {
+   
   pinMode(a, INPUT_PULLUP);
   pinMode(b, INPUT_PULLUP);
   pinMode(c, INPUT_PULLUP);
@@ -89,7 +99,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(e), bldoA, CHANGE);
   attachInterrupt(digitalPinToInterrupt(f), bldoB, CHANGE);
   attachInterrupt(digitalPinToInterrupt(g), brdoA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(h), brdoB, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(h), brdoB, CHANGE);  
   Serial.begin(2000000);
 }
 void fldoA() {
