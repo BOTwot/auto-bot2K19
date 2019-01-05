@@ -4,7 +4,8 @@
 int curangle[4], setangle[4], out1[4], out2[4];
 uint8_t stmax[4], stmin[4];                               //Variables for min and max adjust pwm
 double stkp[4], stki[4], stkd[4];                         //Kp,Ki,Kd for AutoPID Lib
-int a[4]={2,4,6,8}, b[4]={3,5,7,9};                                         //pins for interrupts, b not necessarily be interrupt
+int a[4]={10,11,12,13}, b[4]={14,15,16,17};                   //pins for interrupts, b not necessarily be interrupt
+int mtr1[4]={2,3,4,5},mtr2[4]={6,7,8,9};                  //pins for analog write
 class knee                                           //class for elbows of legs
 {
   public:
@@ -61,7 +62,7 @@ AutoPID pid_frknee(&curangle[1], &setangle[1], &out1[1], &out2[1], stmin[1], stm
 AutoPID pid_blknee(&curangle[2], &setangle[2], &out1[2], &out2[2], stmin[2], stmax[2], stkp[2], stki[2], stkd[2]); //pid controller for back left knee
 AutoPID pid_brknee(&curangle[3], &setangle[3], &out1[3], &out2[3], stmin[3], stmax[3], stkp[3], stki[3], stkd[3]); //pid controller for back right knee
 shoulder flleg(a[0], b[0], pid_flknee), frleg(a[1], b[1], pid_frknee), blleg(a[2], b[2], pid_blknee), brleg(a[3], b[3], pid_brknee); // initiating ogjects for respective knee
-knee flknee(1), frknee(10), blknee(11), brknee(12);// initiating objects for respective elbows
+knee flknee(1), frknee(18), blknee(19), brknee(20);// initiating objects for respective elbows
 void setup()
 {
   for (int i = 0; i < 4; i++)
@@ -69,6 +70,8 @@ void setup()
     curangle[i] = 0, setangle[i] = 0;                     //pid values for legs
     stmax[i] = 100, stmin[i] = 0;                         //front left->0,front right->1
     stkp[i] = 14, stki[i] = 0.00017, stkd[i] = 295;       //back left->2,back right->3
+    pinMode(mtr1[i],OUTPUT);
+    pinMode(mtr1[i],OUTPUT);
   }
   for (int i = 0; i < 3; i++)
   {
@@ -99,5 +102,13 @@ void br_getdir()
 }
 void loop()
 {
-
+  for(int i=0; i<4;i++)
+  {
+  analogWrite(mtr1[i], out1[i]);
+  analogWrite(mtr2[i], out2[i]);
+  }
+  flleg.updateang();
+  frleg.updateang();
+  blleg.updateang();
+  brleg.updateang();
 }
