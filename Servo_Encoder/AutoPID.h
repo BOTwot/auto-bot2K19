@@ -6,7 +6,7 @@ class AutoPID {
   private:
 
     double _Kp, _Ki, _Kd;
-    double _integral, _previousError;
+    double _integral, _previousError,_e_old_i;
 
     int *_input;
     int *_setpoint, *_output1, *_output2;
