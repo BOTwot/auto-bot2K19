@@ -41,7 +41,7 @@ class shoulder                                             //class for shoulder 
     {
       a = x;
       b = y;
-      mypid = &pid;
+      mypid = &pid;                                      //attaching respective pid to the object 
     }
     void get_dir()                                    //getting direction of rotation of motor:op++:-CW op--:-CCW
     {
@@ -58,17 +58,17 @@ class shoulder                                             //class for shoulder 
         op = 0;
       angle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
     }
-    void setangle(int x)
+    void setangle(int x)                                 //function to write angle to motor
     {
       updateang();
       mypid->_input = &angle;
       mypid->_setpoint = &x;
     }
-    void setangle(double kp, double kd, double ki)
+    void setangle(double kp, double kd, double ki)        //overloaded function to change pid values
     {
       mypid->setGains(kp, ki, kd);
     }
-    void setangle(uint8_t o_max, uint8_t o_min)
+    void setangle(uint8_t o_max, uint8_t o_min)           //overloaded function to change max and min values of pid
     {
       mypid->setOutputRange(o_min, o_max);
     }
@@ -117,7 +117,7 @@ void br_getdir()
 {
   brleg.get_dir();
 }
-void cycle1()
+void cycle1()                               //random test function
 {
   flleg.setangle(23);
 }
