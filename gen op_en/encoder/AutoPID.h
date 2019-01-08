@@ -4,12 +4,12 @@
 
 class AutoPID {
   private:
-
+    friend class shoulder;
     double _Kp, _Ki, _Kd;
     double _integral, _previousError;
 
-    int *_input;
-    int *_setpoint, *_output1, *_output2;
+    int *_setpoint,*_input;
+    int  *_output1, *_output2;
     uint8_t _outputMin, _outputMax;
 
     unsigned long _timeStep, _lastStep;

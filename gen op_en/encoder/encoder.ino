@@ -4,8 +4,8 @@
 int curangle[4], setangle[4], out1[4], out2[4];
 uint8_t stmax[4], stmin[4];                               //Variables for min and max adjust pwm
 double stkp[4], stki[4], stkd[4];                         //Kp,Ki,Kd for AutoPID Lib
-int a[4]={10,11,12,13}, b[4]={14,15,16,17};                   //pins for interrupts, b not necessarily be interrupt
-int mtr1[4]={2,3,4,5},mtr2[4]={6,7,8,9};                  //pins for analog write
+int a[4] = {10, 11, 12, 13}, b[4] = {14, 15, 16, 17};         //pins for interrupts, b not necessarily be interrupt
+int mtr1[4] = {2, 3, 4, 5}, mtr2[4] = {6, 7, 8, 9};       //pins for analog write
 class knee                                           //class for elbows of legs
 {
   public:
@@ -34,12 +34,14 @@ class knee                                           //class for elbows of legs
 class shoulder                                             //class for shoulder of the leg
 {
   public:
-    int a, b, angle;
+    int a, b, angle, out1, out2;
+    AutoPID *mypid;
     volatile int op = 0;
-    shoulder(int x, int y,  AutoPID &mypid)                //attaching pin and pid controller to shoulder
+    shoulder(int x, int y,  AutoPID &pid)                //attaching pin and pid controller to shoulder
     {
       a = x;
       b = y;
+      mypid = &pid;
     }
     void get_dir()                                    //getting direction of rotation of motor:op++:-CW op--:-CCW
     {
@@ -56,6 +58,20 @@ class shoulder                                             //class for shoulder 
         op = 0;
       angle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
     }
+    void setangle(int x)
+    {
+      updateang();
+      mypid->_input = &angle;
+      mypid->_setpoint = &x;
+    }
+    void setangle(double kp, double kd, double ki)
+    {
+      mypid->setGains(kp, ki, kd);
+    }
+    void setangle(uint8_t o_max, uint8_t o_min)
+    {
+      mypid->setOutputRange(o_min, o_max);
+    }
 };
 AutoPID pid_flknee(&curangle[0], &setangle[0], &out1[0], &out2[0], stmin[0], stmax[0], stkp[0], stki[0], stkd[0]); //pid controller for front left knee
 AutoPID pid_frknee(&curangle[1], &setangle[1], &out1[1], &out2[1], stmin[1], stmax[1], stkp[1], stki[1], stkd[1]); //pid controller for front right knee
@@ -65,15 +81,16 @@ shoulder flleg(a[0], b[0], pid_flknee), frleg(a[1], b[1], pid_frknee), blleg(a[2
 knee flknee(1), frknee(18), blknee(19), brknee(20);// initiating objects for respective elbows
 void setup()
 {
+
   for (int i = 0; i < 4; i++)
   {
-    curangle[i] = 0, setangle[i] = 0;                     //pid values for legs
+    curangle[i] = 0, setangle[i] = 0;                  //pid values for legs
     stmax[i] = 100, stmin[i] = 0;                         //front left->0,front right->1
     stkp[i] = 14, stki[i] = 0.00017, stkd[i] = 295;       //back left->2,back right->3
-    pinMode(mtr1[i],OUTPUT);
-    pinMode(mtr1[i],OUTPUT);
+    pinMode(mtr1[i], OUTPUT);
+    pinMode(mtr1[i], OUTPUT);
   }
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 4; i++)
   {
     pinMode(a[i], INPUT_PULLUP);                      //initiating pins as input
     pinMode(b[i], INPUT_PULLUP);
@@ -100,15 +117,11 @@ void br_getdir()
 {
   brleg.get_dir();
 }
+void cycle1()
+{
+  flleg.setangle(23);
+}
 void loop()
 {
-  for(int i=0; i<4;i++)
-  {
-  analogWrite(mtr1[i], out1[i]);
-  analogWrite(mtr2[i], out2[i]);
-  }
-  flleg.updateang();
-  frleg.updateang();
-  blleg.updateang();
-  brleg.updateang();
+
 }
