@@ -1,18 +1,18 @@
-#include <PinChangeInt.h>
+// Libraries Declared here
 #include "AutoPID.h"
 #include<Servo.h>
-int curangle[4], setangle[4], out1[4], out2[4];
-uint8_t stmax[4], stmin[4];                               //Variables for min and max adjust pwm
-double stkp[4], stki[4], stkd[4];                         //Kp,Ki,Kd for AutoPID Lib
-int a[4] = {10, 11, 12, 13}, b[4] = {14, 15, 16, 17};         //pins for interrupts, b not necessarily be interrupt
-int mtr1[4] = {2, 3, 4, 5}, mtr2[4] = {6, 7, 8, 9};       //pins for analog write
+
+//Global Variables
+uint8_t stmax = 100, stmin = 0;                                      //Variables for min and max adjust pwm
+
+// Class Decalration
 class knee                                           //class for elbows of legs
 {
   public:
     float corrS;
-    int angle(float x)                                  //maping angle to pwm output
+    int angle(int x)                                  //maping angle to pwm output
     {
-      x = map(x, -90, 90, 1000, 2000);
+      x = map(x, 0, 90, 1000, 2000);
       return x;
     }
     Servo servoS;
@@ -34,20 +34,29 @@ class knee                                           //class for elbows of legs
 class shoulder                                             //class for shoulder of the leg
 {
   public:
-    int a, b, angle, out1, out2;
-    AutoPID *mypid;
+    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2;
+    double kp, ki, kd;
     volatile int op = 0;
-    shoulder(int x, int y,  AutoPID &pid)                //attaching pin and pid controller to shoulder
-    {
-      a = x;
-      b = y;
-      mypid = &pid;                                      //attaching respective pid to the object 
+    shoulder(int x, int y, int z, int w, int Kp, int Ki, int Kd)           //attaching pin and pid controller to shoulder
+    { 
+      phaseA = x;
+      phaseB = y;
+      mtr1 = z;
+      mtr2 = w;
+      pinMode(phaseA, INPUT_PULLUP);
+      pinMode(phaseB, INPUT_PULLUP);
+      pinMode(mtr1, OUTPUT);
+      pinMode(mtr2, OUTPUT);
+      kp = Kp;
+      ki = Ki;
+      kd = Kd;
+      AutoPID my(&curangle, &sangle, &output1, &output2, stmax, stmin, kp, ki, kd);
     }
     void get_dir()                                    //getting direction of rotation of motor:op++:-CW op--:-CCW
     {
-      if (digitalRead(a) == HIGH && digitalRead(b) == LOW)
+      if (digitalRead(phaseA) == HIGH && digitalRead(phaseB) == LOW)
         op++;
-      else if (digitalRead(a) == HIGH && digitalRead(b) == HIGH)
+      else if (digitalRead(phaseA) == HIGH && digitalRead(phaseB) == HIGH)
         op--;
     }
     void updateang()                                  //change angle according to reading from encoder
@@ -56,51 +65,34 @@ class shoulder                                             //class for shoulder 
         op = 0;
       if (op <= -22140)
         op = 0;
-      angle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
+      curangle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
     }
     void setangle(int x)                                 //function to write angle to motor
     {
-      updateang();
-      mypid->_input = &angle;
-      mypid->_setpoint = &x;
+      sangle = x;
+      while (curangle != x)
+      {
+        updateang();
+        analogWrite(mtr1, output1);
+        analogWrite(mtr2, output2);
+      }
     }
-    void setangle(double kp, double kd, double ki)        //overloaded function to change pid values
-    {
-      mypid->setGains(kp, ki, kd);
-    }
-    void setangle(uint8_t o_max, uint8_t o_min)           //overloaded function to change max and min values of pid
-    {
-      mypid->setOutputRange(o_min, o_max);
-    }
+
 };
-AutoPID pid_flknee(&curangle[0], &setangle[0], &out1[0], &out2[0], stmin[0], stmax[0], stkp[0], stki[0], stkd[0]); //pid controller for front left knee
-AutoPID pid_frknee(&curangle[1], &setangle[1], &out1[1], &out2[1], stmin[1], stmax[1], stkp[1], stki[1], stkd[1]); //pid controller for front right knee
-AutoPID pid_blknee(&curangle[2], &setangle[2], &out1[2], &out2[2], stmin[2], stmax[2], stkp[2], stki[2], stkd[2]); //pid controller for back left knee
-AutoPID pid_brknee(&curangle[3], &setangle[3], &out1[3], &out2[3], stmin[3], stmax[3], stkp[3], stki[3], stkd[3]); //pid controller for back right knee
-shoulder flleg(a[0], b[0], pid_flknee), frleg(a[1], b[1], pid_frknee), blleg(a[2], b[2], pid_blknee), brleg(a[3], b[3], pid_brknee); // initiating ogjects for respective knee
-knee flknee(1), frknee(18), blknee(19), brknee(20);// initiating objects for respective elbows
+shoulder flleg(2, 4, 5, 6, 100, 100, 100), frleg(3, 7, 8, 9, 100, 100, 100), blleg(18, 10, 11, 12, 100, 100, 100), brleg(19, 13, 14, 15, 100, 100, 100); // initiating ogjects for respective knee
+knee flknee(1), frknee(16), blknee(17), brknee(20);// initiating objects for respective elbows
+
+// Setup
 void setup()
 {
-
-  for (int i = 0; i < 4; i++)
-  {
-    curangle[i] = 0, setangle[i] = 0;                  //pid values for legs
-    stmax[i] = 100, stmin[i] = 0;                         //front left->0,front right->1
-    stkp[i] = 14, stki[i] = 0.00017, stkd[i] = 295;       //back left->2,back right->3
-    pinMode(mtr1[i], OUTPUT);
-    pinMode(mtr1[i], OUTPUT);
-  }
-  for (int i = 0; i < 4; i++)
-  {
-    pinMode(a[i], INPUT_PULLUP);                      //initiating pins as input
-    pinMode(b[i], INPUT_PULLUP);
-  }
-  attachInterrupt(digitalPinToInterrupt(a[0]), fl_getdir, RISING);      //setting up ISR's
-  attachInterrupt(digitalPinToInterrupt(a[1]), fr_getdir, RISING);
-  attachInterrupt(digitalPinToInterrupt(a[2]), bl_getdir, RISING);
-  attachInterrupt(digitalPinToInterrupt(a[3]), br_getdir, RISING);
-  Serial.begin(2000000);
+  attachInterrupt(digitalPinToInterrupt(flleg.phaseA), fl_getdir, RISING);      //setting up ISR's
+  attachInterrupt(digitalPinToInterrupt(frleg.phaseA), fr_getdir, RISING);
+  attachInterrupt(digitalPinToInterrupt(blleg.phaseA), bl_getdir, RISING);
+  attachInterrupt(digitalPinToInterrupt(brleg.phaseA), br_getdir, RISING);
+  Serial.begin(115200);
 }
+
+// Functions
 void fl_getdir()                                                        //calling respective ISR's explicitly
 {
   flleg.get_dir();
@@ -123,5 +115,5 @@ void cycle1()                               //random test function
 }
 void loop()
 {
-
+  
 }
