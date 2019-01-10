@@ -84,7 +84,7 @@ void setup()
 
   for (int i = 0; i < 4; i++)
   {
-    curangle[i] = 0, setangle[i] = 0;                  //pid values for legs
+    curangle = 0, setangle = 0;                  //pid values for legs
     stmax[i] = 100, stmin[i] = 0;                         //front left->0,front right->1
     stkp[i] = 14, stki[i] = 0.00017, stkd[i] = 295;       //back left->2,back right->3
     pinMode(mtr1[i], OUTPUT);
