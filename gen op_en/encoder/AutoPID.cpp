@@ -1,5 +1,15 @@
 #include "AutoPID.h"
-
+AutoPID::AutoPID()
+{
+  *_input = 0;
+  *_setpoint = 0;
+  *_output1 = 0;
+  *_output2 = 0;
+  _outputMin = 0;
+  _outputMax = 0;
+  setGains(0, 0, 0);
+  _timeStep = 1;
+}
 AutoPID::AutoPID(int *input, int *setpoint, int *output1, int *output2, uint8_t outputMin, uint8_t outputMax, double Kp, double Ki, double Kd) {
   _input = input;
   _setpoint = setpoint;
@@ -67,5 +77,3 @@ void AutoPID::reset() {
   _integral = 0;
   _previousError = 0;
 }
-
-
