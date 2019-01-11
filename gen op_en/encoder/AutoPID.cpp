@@ -1,5 +1,19 @@
 #include "AutoPID.h"
 
+AutoPID::AutoPID()
+{ 
+}
+void AutoPID::setParameter(int *input, int *setpoint, int *output1, int *output2, uint8_t outputMin, uint8_t outputMax, double Kp, double Ki, double Kd)
+{
+    _input = input;
+  _setpoint = setpoint;
+  _output1 = output1;
+  _output2 = output2;
+  _outputMin = outputMin;
+  _outputMax = outputMax;
+  setGains(Kp, Ki, Kd);
+  _timeStep = 1;
+}
 AutoPID::AutoPID(int *input, int *setpoint, int *output1, int *output2, uint8_t outputMin, uint8_t outputMax, double Kp, double Ki, double Kd) {
   _input = input;
   _setpoint = setpoint;

@@ -15,12 +15,14 @@ class AutoPID {
     unsigned long _timeStep, _lastStep;
 
   public:
+    AutoPID();
     AutoPID(int *input, int *setpoint, int *output1, int *output2, uint8_t outputMin, uint8_t outputMax, double Kp, double Ki, double Kd);
     void setGains(double Kp, double Ki, double Kd);
     void setOutputRange(uint8_t outputMin, uint8_t outputMax);
     void setTimeStep(unsigned long timeStep);
     void run();
     void reset();
+    void setParameter(int *input, int *setpoint, int *output1, int *output2, uint8_t outputMin, uint8_t outputMax, double Kp, double Ki, double Kd);
 
 
 };//class AutoPID

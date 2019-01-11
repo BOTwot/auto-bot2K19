@@ -33,10 +33,12 @@ class knee                                           //class for elbows of legs
 };
 class shoulder                                             //class for shoulder of the leg
 {
+  
   public:
     int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2;
     double kp, ki, kd;
     volatile int op = 0;
+    AutoPID my;
     shoulder(int x, int y, int z, int w, int Kp, int Ki, int Kd)           //attaching pin and pid controller to shoulder
     { 
       phaseA = x;
@@ -50,7 +52,8 @@ class shoulder                                             //class for shoulder 
       kp = Kp;
       ki = Ki;
       kd = Kd;
-      AutoPID my(&curangle, &sangle, &output1, &output2, stmax, stmin, kp, ki, kd);
+      my.setParameter(&curangle, &sangle, &output1, &output2, stmax, stmin, kp, ki, kd);
+      my.setTimeStep(50);
     }
     void get_dir()                                    //getting direction of rotation of motor:op++:-CW op--:-CCW
     {
@@ -72,6 +75,7 @@ class shoulder                                             //class for shoulder 
       sangle = x;
       while (curangle != x)
       {
+        my.run();
         updateang();
         analogWrite(mtr1, output1);
         analogWrite(mtr2, output2);
