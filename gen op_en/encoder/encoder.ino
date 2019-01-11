@@ -1,5 +1,6 @@
 // Libraries Declared here
 #include "AutoPID.h"
+#include "hardware.h"
 #include<Servo.h>
 
 //Global Variables
@@ -33,14 +34,14 @@ class knee                                           //class for elbows of legs
 };
 class shoulder                                             //class for shoulder of the leg
 {
-  
+
   public:
     int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2;
     double kp, ki, kd;
     volatile int op = 0;
     AutoPID my;
     shoulder(int x, int y, int z, int w, int Kp, int Ki, int Kd)           //attaching pin and pid controller to shoulder
-    { 
+    {
       phaseA = x;
       phaseB = y;
       mtr1 = z;
@@ -72,19 +73,20 @@ class shoulder                                             //class for shoulder 
     }
     void setangle(int x)                                 //function to write angle to motor
     {
-      sangle = x;
-      while (curangle != x)
-      {
-        my.run();
-        updateang();
-        analogWrite(mtr1, output1);
-        analogWrite(mtr2, output2);
-      }
+      sangle = x;                                       //loop needed in function
+      updateang();
+      my.run();
+      analogWrite(mtr1, output1);
+      analogWrite(mtr2, output2);
+
     }
 
 };
-shoulder flleg(2, 4, 5, 6, 100, 100, 100), frleg(3, 7, 8, 9, 100, 100, 100), blleg(18, 10, 11, 12, 100, 100, 100), brleg(19, 13, 14, 15, 100, 100, 100); // initiating ogjects for respective knee
-knee flknee(1), frknee(16), blknee(17), brknee(20);// initiating objects for respective elbows
+shoulder flleg(flleg_phaseA, flleg_phaseB, flleg_mtr1, flleg_mtr2, flleg_kp, flleg_ki, flleg_kd),
+         frleg(frleg_phaseA, frleg_phaseB, frleg_mtr1, frleg_mtr2, frleg_kp, frleg_ki, frleg_kd),
+         blleg(blleg_phaseA, blleg_phaseB, blleg_mtr1, blleg_mtr2, blleg_kp, blleg_ki, blleg_kd),
+         brleg(brleg_phaseA, brleg_phaseB, brleg_mtr1, brleg_mtr2, brleg_kp, brleg_ki, brleg_kd); // initiating ogjects for respective knee
+knee flknee(1), frknee(16), blknee(17), brknee(20);                                           // initiating objects for respective elbows
 
 // Setup
 void setup()
@@ -119,5 +121,5 @@ void cycle1()                               //random test function
 }
 void loop()
 {
-  
+
 }
