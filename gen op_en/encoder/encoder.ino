@@ -95,6 +95,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(frleg.phaseA), fr_getdir, RISING);
   attachInterrupt(digitalPinToInterrupt(blleg.phaseA), bl_getdir, RISING);
   attachInterrupt(digitalPinToInterrupt(brleg.phaseA), br_getdir, RISING);
+  pinMode(activate_pin, INPUT_PULLUP);
   Serial.begin(115200);
 }
 
@@ -115,11 +116,27 @@ void br_getdir()
 {
   brleg.get_dir();
 }
+void initiate()
+{
+  flleg.op = 0;
+  frleg.op = 0;
+  blleg.op = 0;
+  brleg.op = 0;
+  flleg.setangle(0);
+  frleg.setangle(0);
+  blleg.setangle(0);
+  brleg.setangle(0);
+  flknee.setangle(servo_initial_angle);
+  frknee.setangle(servo_initial_angle);
+  blknee.setangle(servo_initial_angle);
+  brknee.setangle(servo_initial_angle);
+}
 void cycle1()                               //random test function
 {
   flleg.setangle(23);
 }
 void loop()
 {
-
+  if (activate_pin == LOW)
+    initiate();
 }
