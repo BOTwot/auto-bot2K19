@@ -36,7 +36,7 @@ class shoulder                                             //class for shoulder 
 {
 
   public:
-    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2;
+    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2, flag = 0;
     double kp, ki, kd;
     volatile int op = 0;
     AutoPID my;
@@ -78,7 +78,8 @@ class shoulder                                             //class for shoulder 
       my.run();
       analogWrite(mtr1, output1);
       analogWrite(mtr2, output2);
-
+      if (curangle == x)
+        flag == 1;
     }
 
 };
@@ -116,7 +117,14 @@ void br_getdir()
 {
   brleg.get_dir();
 }
-void initiate()
+void servo_initiate()
+{
+  flknee.setangle(servo_initial_angle);
+  frknee.setangle(servo_initial_angle);
+  blknee.setangle(servo_initial_angle);
+  brknee.setangle(servo_initial_angle);
+}
+void motor_initiate()
 {
   flleg.op = 0;
   frleg.op = 0;
@@ -126,17 +134,37 @@ void initiate()
   frleg.setangle(0);
   blleg.setangle(0);
   brleg.setangle(0);
-  flknee.setangle(servo_initial_angle);
-  frknee.setangle(servo_initial_angle);
-  blknee.setangle(servo_initial_angle);
-  brknee.setangle(servo_initial_angle);
 }
-void cycle1()                               //random test function
+void reset_ang()
 {
-  flleg.setangle(23);
+  flleg.flag = 0;
+  frleg.flag = 0;
+  blleg.flag = 0;
+  brleg.flag = 0;
+}
+void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_s, int br_k)
+{
+  flknee.setangle(fl_k);
+  frknee.setangle(fr_k);
+  blknee.setangle(bl_k);
+  brknee.setangle(br_k);
+  flleg.setangle(fl_s);
+  frleg.setangle(fr_s);
+  blleg.setangle(bl_s);
+  brleg.setangle(br_s);
+}
+void stand()                               //random test function
+{
+  reset_ang();
+  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
+  {
+    set_all(10,20,30,40,50,60,70,80);
+  }
 }
 void loop()
 {
-  if (activate_pin == LOW)
-    initiate();
+  if (activate_pin == HIGH)
+    servo_initiate();
+  else
+    motor_initiate();
 }
