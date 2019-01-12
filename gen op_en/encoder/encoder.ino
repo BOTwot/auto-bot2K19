@@ -135,7 +135,7 @@ void motor_initiate()
   blleg.setangle(0);
   brleg.setangle(0);
 }
-void reset_ang()
+void reset_flags()
 {
   flleg.flag = 0;
   frleg.flag = 0;
@@ -155,7 +155,7 @@ void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_
 }
 void stand()                               //random test function
 {
-  reset_ang();
+  reset_flags();
   while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
   {
     set_all(10,20,30,40,50,60,70,80);
