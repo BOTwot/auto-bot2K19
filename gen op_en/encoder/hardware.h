@@ -30,5 +30,8 @@
 #define frknee_pin 16
 #define blknee_pin 17
 #define brknee_pin 20
-#define servo_initial_angle 10
+#define servo_initangle 10
+#define encoder_initangle 0
+#define encoder_finangle 0
+#define servo_finangle 0
 #define activate_pin 21

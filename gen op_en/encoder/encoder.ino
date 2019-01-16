@@ -5,6 +5,7 @@
 
 //Global Variables
 uint8_t stmax = 100, stmin = 0;                                      //Variables for min and max adjust pwm
+int initflag = 0;
 
 // Class Decalration
 class knee                                           //class for elbows of legs
@@ -130,6 +131,14 @@ void motor_initiate()
   frleg.op = 0;
   blleg.op = 0;
   brleg.op = 0;
+  initflag = 1;
+}
+void motor_setInitial()
+{
+  flknee.setangle(servo_initial_angle);
+  frknee.setangle(servo_initial_angle);
+  blknee.setangle(servo_initial_angle);
+  brknee.setangle(servo_initial_angle);
   flleg.setangle(0);
   frleg.setangle(0);
   blleg.setangle(0);
@@ -153,18 +162,69 @@ void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_
   blleg.setangle(bl_s);
   brleg.setangle(br_s);
 }
-void stand()                               //random test function
+//void stand()                               //random test function
+//{
+//  reset_flags();
+//  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
+//  {
+//    set_all(10, 20, 30, 40, 50, 60, 70, 80);
+//  }
+//}
+
+void cycle1()
 {
-  reset_flags();
-  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
-  {
-    set_all(10,20,30,40,50,60,70,80);
-  }
+  flknee.setangle(fl_k);
+  flleg.setangle(fl_s);
+  frknee.setangle(fr_k);
+  frleg.setangle(fr_s);
+  blknee.setangle(bl_k);
+  blleg.setangle(bl_s);
+  brknee.setangle(br_k);
+  brleg.setangle(br_s);
+}
+void cycle2()
+{
+  flknee.setangle(fl_k);
+  flleg.setangle(fl_s);
+  frknee.setangle(fr_k);
+  frleg.setangle(fr_s);
+  blknee.setangle(bl_k);
+  blleg.setangle(bl_s);
+  brknee.setangle(br_k);
+  brleg.setangle(br_s);
+}
+void cycle3()
+{
+
+}
+void cycle4()
+{
+  flknee.setangle(fl_k);
+  flleg.setangle(fl_s);
+  frknee.setangle(fr_k);
+  frleg.setangle(fr_s);
+  blknee.setangle(bl_k);
+  blleg.setangle(bl_s);
+  brknee.setangle(br_k);
+  brleg.setangle(br_s);
+}
+void cycle5()
+{
+  flknee.setangle(fl_k);
+  flleg.setangle(fl_s);
+  frknee.setangle(fr_k);
+  frleg.setangle(fr_s);
+  blknee.setangle(bl_k);
+  blleg.setangle(bl_s);
+  brknee.setangle(br_k);
+  brleg.setangle(br_s);
 }
 void loop()
 {
-  if (activate_pin == HIGH)
+  if (digitalRead(activate_pin) == HIGH)
     servo_initiate();
-  else
+  else if (digitalRead(activate_pin) == LOW && initflag == 0)
     motor_initiate();
+  else if (digitalRead(activate_pin) == LOW && initflag == 1)
+    motor_setInitail();
 }

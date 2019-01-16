@@ -14,19 +14,21 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int angle;
   Serial.println(op);
-    if (op >= 22140)
-      op = 0;
-    if (op <= -22140)
-      op = 0;
-    angle = map(op,-22140,22140,-360,360);
-    Serial.println(angle);
+//  int angle;
+//  Serial.println(op);
+//    if (op >= 22140)
+//      op = 0;
+//    if (op <= -22140)
+//      op = 0;
+//    angle = map(op,-22140,22140,-360,360);
+//    Serial.println(angle);
 }
 void doA()
 {
-  if ((digitalRead(a) == HIGH && digitalRead(b) == LOW))
-    op++;
-  else if ((digitalRead(a) == HIGH && digitalRead(b) == HIGH))
-    op--;
+  op++;
+//  if ((digitalRead(a) == HIGH && digitalRead(b) == LOW))
+//    op++;
+//  else if ((digitalRead(a) == HIGH && digitalRead(b) == HIGH))
+//    op--;
 }
