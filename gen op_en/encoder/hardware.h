@@ -35,11 +35,15 @@
 #define brknee_pin 20
 
 //general
-#define servo_initial_angle 10
+#define servo_initangle 0
+#define servo_finangle 30
+#define encoder_initangle 0
+#define encoder_finangle 60
 #define activate_pin 21
-#define set_delay 20
+#define set_delay 300
 #define x1 40
 #define y1 20
 #define initial1 13
 #define initial2 0
 #define dly 200
+#define walkpin 22

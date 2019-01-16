@@ -5,7 +5,7 @@
 
 //Global Variables
 uint8_t stmax = 100, stmin = 0;                                      //Variables for min and max adjust pwm
-
+int initflag = 0;
 // Class Decalration
 class knee                                           //class for elbows of legs
 {
@@ -37,7 +37,7 @@ class shoulder                                             //class for shoulder 
 
   public:
     long long last_time;
-    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2, flag = 0,time_flag=0;
+    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2, flag = 0, time_flag = 0;
     double kp, ki, kd;
     volatile int op = 0;
     AutoPID my;
@@ -76,21 +76,22 @@ class shoulder                                             //class for shoulder 
     {
       sangle = x;                                       //loop needed in function
       updateang();
-      if (curangle != x)
+      if (( curangle >= (x + 2) ||  curangle <= (x - 2)))
       {
-         last_time = 0;
-         time_flag=0;
+        flag = 0;
+        last_time = 0;
+        time_flag = 0;
       }
-      else if(curangle==x && time_flag!=1)
+      else if (( curangle <= (x + 2) ||  curangle >= (x - 2)) && time_flag != 1)
       {
         last_time = millis();
-        time_flag=1;
+        time_flag = 1;
       }
+      if (( curangle <= (x + 2) ||  curangle >= (x - 2))&& (millis() - last_time >= set_delay))
+        flag = 1;
       my.run();
       analogWrite(mtr1, output1);
       analogWrite(mtr2, output2);
-      if (curangle == x && (millis() - last_time >= set_delay))
-        flag == 1;
     }
 
 };
@@ -130,10 +131,10 @@ void br_getdir()
 }
 void servo_initiate()
 {
-  flknee.setangle(servo_initial_angle);
-  frknee.setangle(servo_initial_angle);
-  blknee.setangle(servo_initial_angle);
-  brknee.setangle(servo_initial_angle);
+  flknee.setangle(servo_initangle);
+  frknee.setangle(servo_initangle);
+  blknee.setangle(servo_initangle);
+  brknee.setangle(servo_initangle);
 }
 void motor_initiate()
 {
@@ -141,19 +142,27 @@ void motor_initiate()
   frleg.op = 0;
   blleg.op = 0;
   brleg.op = 0;
-  flleg.setangle(0);
-  frleg.setangle(0);
-  blleg.setangle(0);
-  brleg.setangle(0);
 }
+//void motor_setInitial()
+//{
+//  flknee.setangle(servo_initial_angle);
+//  frknee.setangle(servo_initial_angle);
+//  blknee.setangle(servo_initial_angle);
+//  brknee.setangle(servo_initial_angle);
+//  flleg.setangle(0);
+//  frleg.setangle(0);
+//  blleg.setangle(0);
+//  brleg.setangle(0);
+//}
 void reset_ang()
 {
   flleg.flag = 0;
   frleg.flag = 0;
   blleg.flag = 0;
   brleg.flag = 0;
+  initflag = 1;
 }
-void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_s, int br_k)
+void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int br_s, int br_k, int bl_s, int bl_k)
 {
   reset_ang();
   while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
@@ -170,28 +179,44 @@ void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_
 }
 void stand()                               //random test function
 {
-  set_all(-x1, -initial2, initial1, initial2, initial1, y1, initial1, (-y1 / 2));
+  set_all(encoder_initangle, servo_initangle, encoder_initangle, servo_initangle, encoder_initangle, servo_initangle, encoder_initangle, servo_initangle);
 }
 void cycle1()                               //random test function
 {
-  set_all(-x1, -y1, x1, initial2, initial1, (y1 / 2), -initial1, -initial2);
+  set_all(encoder_finangle, servo_initangle, encoder_initangle, servo_initangle, (encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle);
 }
 void cycle2()                               //random test function
 {
-  set_all(-initial1, -y1, x1, y1, initial1, initial2, -x1, -initial2);
+  set_all((encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle, encoder_initangle, servo_initangle, encoder_finangle, servo_finangle);
 }
 void cycle3()                               //random test function
 {
-  set_all(-initial1, -(y1 / 2), initial1, y1, x1, initial2, -x1, -y1);
+  set_all(encoder_initangle, servo_initangle, encoder_finangle, servo_finangle, encoder_initangle, servo_finangle, encoder_finangle, servo_initangle);
 }
 void cycle4()                               //random test function
 {
-  set_all(-initial1, -initial2, initial1, (y1 / 2), x1, y1, -initial1, -y1);
+  set_all(encoder_initangle, servo_finangle, encoder_finangle, servo_initangle, encoder_finangle, servo_finangle, (encoder_finangle / 2), servo_initangle);
+}
+void cycle5()
+{
+  set_all(encoder_finangle, servo_finangle, encoder_finangle / 2, servo_initangle, encoder_finangle, servo_initangle, encoder_initangle, servo_initangle);
+}
+void walk()
+{
+  cycle1();
+  cycle2();
+  cycle3();
+  cycle4();
+  cycle5();
 }
 void loop()
 {
-  if (activate_pin == HIGH)
+  if (digitalRead(activate_pin) == HIGH)
     servo_initiate();
-  else
+  else if (digitalRead(activate_pin) == LOW && initflag == 0)
     motor_initiate();
+  else if (digitalRead(walkpin) == LOW)
+    walk();
+  else if (digitalRead(activate_pin) == LOW && initflag == 1)
+    stand();
 }
