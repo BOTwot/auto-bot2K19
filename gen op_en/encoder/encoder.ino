@@ -5,7 +5,6 @@
 
 //Global Variables
 uint8_t stmax = 100, stmin = 0;                                      //Variables for min and max adjust pwm
-int initflag = 0;
 
 // Class Decalration
 class knee                                           //class for elbows of legs
@@ -23,7 +22,7 @@ class knee                                           //class for elbows of legs
       servoS.attach(pintoS);
       corrS = 0.0;
     }
-    knee(int pintoS, int valS)                         //to attach pin to knee with non-zero error
+    shoulder(int pintoS, int valS)                         //to attach pin to knee with non-zero error
     {
       servoS.attach(pintoS);
       corrS = valS;
@@ -37,7 +36,8 @@ class shoulder                                             //class for shoulder 
 {
 
   public:
-    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2, flag = 0;
+    long long last_time;
+    int phaseA, phaseB, curangle, sangle, output1, output2, mtr1, mtr2, flag = 0,time_flag=0;
     double kp, ki, kd;
     volatile int op = 0;
     AutoPID my;
@@ -76,10 +76,20 @@ class shoulder                                             //class for shoulder 
     {
       sangle = x;                                       //loop needed in function
       updateang();
+      if (curangle != x)
+      {
+         last_time = 0;
+         time_flag=0;
+      }
+      else if(curangle==x && time_flag!=1)
+      {
+        last_time = millis();
+        time_flag=1;
+      }
       my.run();
       analogWrite(mtr1, output1);
       analogWrite(mtr2, output2);
-      if (curangle == x)
+      if (curangle == x && (millis() - last_time >= set_delay))
         flag == 1;
     }
 
@@ -131,20 +141,12 @@ void motor_initiate()
   frleg.op = 0;
   blleg.op = 0;
   brleg.op = 0;
-  initflag = 1;
-}
-void motor_setInitial()
-{
-  flknee.setangle(servo_initial_angle);
-  frknee.setangle(servo_initial_angle);
-  blknee.setangle(servo_initial_angle);
-  brknee.setangle(servo_initial_angle);
   flleg.setangle(0);
   frleg.setangle(0);
   blleg.setangle(0);
   brleg.setangle(0);
 }
-void reset_flags()
+void reset_ang()
 {
   flleg.flag = 0;
   frleg.flag = 0;
@@ -153,78 +155,43 @@ void reset_flags()
 }
 void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int bl_s, int bl_k, int br_s, int br_k)
 {
-  flknee.setangle(fl_k);
-  frknee.setangle(fr_k);
-  blknee.setangle(bl_k);
-  brknee.setangle(br_k);
-  flleg.setangle(fl_s);
-  frleg.setangle(fr_s);
-  blleg.setangle(bl_s);
-  brleg.setangle(br_s);
+  reset_ang();
+  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
+  {
+    flknee.setangle(fl_k);
+    frknee.setangle(fr_k);
+    blknee.setangle(bl_k);
+    brknee.setangle(br_k);
+    flleg.setangle(fl_s);
+    frleg.setangle(fr_s);
+    blleg.setangle(bl_s);
+    brleg.setangle(br_s);
+  }
 }
-//void stand()                               //random test function
-//{
-//  reset_flags();
-//  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
-//  {
-//    set_all(10, 20, 30, 40, 50, 60, 70, 80);
-//  }
-//}
-
-void cycle1()
+void stand()                               //random test function
 {
-  flknee.setangle(fl_k);
-  flleg.setangle(fl_s);
-  frknee.setangle(fr_k);
-  frleg.setangle(fr_s);
-  blknee.setangle(bl_k);
-  blleg.setangle(bl_s);
-  brknee.setangle(br_k);
-  brleg.setangle(br_s);
+  set_all(-x1, -initial2, initial1, initial2, initial1, y1, initial1, (-y1 / 2));
 }
-void cycle2()
+void cycle1()                               //random test function
 {
-  flknee.setangle(fl_k);
-  flleg.setangle(fl_s);
-  frknee.setangle(fr_k);
-  frleg.setangle(fr_s);
-  blknee.setangle(bl_k);
-  blleg.setangle(bl_s);
-  brknee.setangle(br_k);
-  brleg.setangle(br_s);
+  set_all(-x1, -y1, x1, initial2, initial1, (y1 / 2), -initial1, -initial2);
 }
-void cycle3()
+void cycle2()                               //random test function
 {
-
+  set_all(-initial1, -y1, x1, y1, initial1, initial2, -x1, -initial2);
 }
-void cycle4()
+void cycle3()                               //random test function
 {
-  flknee.setangle(fl_k);
-  flleg.setangle(fl_s);
-  frknee.setangle(fr_k);
-  frleg.setangle(fr_s);
-  blknee.setangle(bl_k);
-  blleg.setangle(bl_s);
-  brknee.setangle(br_k);
-  brleg.setangle(br_s);
+  set_all(-initial1, -(y1 / 2), initial1, y1, x1, initial2, -x1, -y1);
 }
-void cycle5()
+void cycle4()                               //random test function
 {
-  flknee.setangle(fl_k);
-  flleg.setangle(fl_s);
-  frknee.setangle(fr_k);
-  frleg.setangle(fr_s);
-  blknee.setangle(bl_k);
-  blleg.setangle(bl_s);
-  brknee.setangle(br_k);
-  brleg.setangle(br_s);
+  set_all(-initial1, -initial2, initial1, (y1 / 2), x1, y1, -initial1, -y1);
 }
 void loop()
 {
-  if (digitalRead(activate_pin) == HIGH)
+  if (activate_pin == HIGH)
     servo_initiate();
-  else if (digitalRead(activate_pin) == LOW && initflag == 0)
+  else
     motor_initiate();
-  else if (digitalRead(activate_pin) == LOW && initflag == 1)
-    motor_setInitail();
 }

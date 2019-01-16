@@ -1,3 +1,4 @@
+//encoder motor i.e.shoulders
 #define flleg_phaseA 2
 #define flleg_phaseB 4
 #define flleg_mtr1 5
@@ -26,12 +27,19 @@
 #define brleg_kp 100
 #define brleg_ki 100
 #define brleg_kd 100
+
+//servo motor i.e.knee
 #define flknee_pin 1
 #define frknee_pin 16
 #define blknee_pin 17
 #define brknee_pin 20
-#define servo_initangle 10
-#define encoder_initangle 0
-#define encoder_finangle 0
-#define servo_finangle 0
+
+//general
+#define servo_initial_angle 10
 #define activate_pin 21
+#define set_delay 20
+#define x1 40
+#define y1 20
+#define initial1 13
+#define initial2 0
+#define dly 200
