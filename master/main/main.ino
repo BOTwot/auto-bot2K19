@@ -39,7 +39,8 @@ class shoulder                                             //class for shoulder 
   public:
     long long last_time;
     int phaseA, phaseB,  flag = 0, time_flag = 0;
-    double curangle, sangle, output, mtr, kp, ki, kd;
+    int cur_counts, set_counts;
+    double output, mtr, kp, ki, kd
     volatile int op = 0;
     AutoPID my;
     MotorDriver motor;
@@ -54,7 +55,7 @@ class shoulder                                             //class for shoulder 
       kp = Kp;
       ki = Ki;
       kd = Kd;
-      my.setParameter(&curangle, &sangle, &output, stmax, stmin, kp, ki, kd);
+      my.setParameter(&op, &set_counts, &output, stmax, stmin, kp, ki, kd);
       motor.setadd(add);
       motor.scanBus();
       motor.begin();
@@ -73,24 +74,23 @@ class shoulder                                             //class for shoulder 
         op = 0;
       if (op <= -22140)
         op = 0;
-      curangle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
     }
     void setangle(int x)                                 //function to write angle to motor
     {
-      sangle = x;                                       //loop needed in function
+      set_counts = map(x,-360,360,-22140,22140);                                       //loop needed in function
       updateang();
-      if (( curangle >= (x + 2) ||  curangle <= (x - 2)))
+      if (( op >= (x + 10) ||  op <= (x - 10)))
       {
         flag = 0;
         last_time = 0;
         time_flag = 0;
       }
-      else if (( curangle <= (x + 2) ||  curangle >= (x - 2)) && time_flag != 1)
+      else if (( op <= (x + 10) ||  op >= (x - 10)) && time_flag != 1)
       {
         last_time = millis();
         time_flag = 1;
       }
-      if (( curangle <= (x + 2) ||  curangle >= (x - 2)) && (millis() - last_time >= set_delay))
+      if (( op <= (x + 10) ||  op >= (x - 10)) && (millis() - last_time >= set_delay))
         flag = 1;
       my.run();
       motor.setPWM(output);
@@ -139,13 +139,13 @@ void servo_initiate()
   blknee.setangle(servo_initangle);
   brknee.setangle(servo_initangle);
 }
-void motor_initiate()
-{
-  flleg.op = 0;
-  frleg.op = 0;
-  blleg.op = 0;
-  brleg.op = 0;
-}
+//void motor_initiate()
+//{
+//  flleg.op = 0;
+//  frleg.op = 0;
+//  blleg.op = 0;
+//  brleg.op = 0;
+//}
 //void motor_setInitial()
 //{
 //  flknee.setangle(servo_initial_angle);
@@ -216,10 +216,10 @@ void loop()
 {
   if (digitalRead(activate_pin) == HIGH)
     servo_initiate();
-  else if (digitalRead(activate_pin) == LOW && initflag == 0)
-    motor_initiate();
+//  else if (digitalRead(activate_pin) == LOW && initflag == 0)
+//    motor_initiate();
   else if (digitalRead(walkpin) == LOW)
     walk();
-  else if (digitalRead(activate_pin) == LOW && initflag == 1)
+  else if (digitalRead(activate_pin) == LOW )
     stand();
 }
