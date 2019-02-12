@@ -7,7 +7,7 @@ class AutoPID {
   public:
     AutoPID();
     // Constructor - takes pointer inputs for control variales, so they are updated automatically
-    AutoPID(double *input, double *setpoint, double *output, double outputMin, double outputMax,
+    AutoPID(int *input, int *setpoint, double *output, uint8_t outputMin, uint8_t outputMax,
             double Kp, double Ki, double Kd);
     // Allows manual adjustment of gains
     void setGains(double Kp, double Ki, double Kd);
@@ -27,14 +27,15 @@ class AutoPID {
 
     double getIntegral();
     void setIntegral(double integral);
-    void setParameter(double *input, double *setpoint, double *output, double outputMin, double outputMax,
+    void setParameter(int *input, int *setpoint, double *output, uint8_t outputMin, uint8_t outputMax,
             double Kp, double Ki, double Kd);
   private:
     double _Kp, _Ki, _Kd;
     double _integral, _previousError;
     double _bangOn, _bangOff;
-    double *_input, *_setpoint, *_output;
-    double _outputMin, _outputMax;
+    double  *_output;
+    int *_input, *_setpoint;
+    int _outputMin, _outputMax;
     unsigned long _timeStep, _lastStep;
     bool _stopped;
 
@@ -43,7 +44,7 @@ class AutoPID {
 class AutoPIDRelay : public AutoPID {
   public:
 
-    AutoPIDRelay(double *input, double *setpoint, bool *relayState, double pulseWidth, double Kp, double Ki, double Kd)
+    AutoPIDRelay(int *input, int *setpoint, bool *relayState, double pulseWidth, double Kp, double Ki, double Kd)
       : AutoPID(input, setpoint, &_pulseValue, 0, 1.0, Kp, Ki, Kd) {
       _relayState = relayState;
       _pulseWidth = pulseWidth;

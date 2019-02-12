@@ -40,7 +40,7 @@ class shoulder                                             //class for shoulder 
     long long last_time;
     int phaseA, phaseB,  flag = 0, time_flag = 0;
     int cur_counts, set_counts;
-    double output, mtr, kp, ki, kd
+    double output, mtr, kp, ki, kd;
     volatile int op = 0;
     AutoPID my;
     MotorDriver motor;

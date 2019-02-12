@@ -3,7 +3,7 @@ AutoPID::AutoPID()
 {
 }
 
-AutoPID::AutoPID(double *input, double *setpoint, double *output, double outputMin, double outputMax,
+AutoPID::AutoPID(int *input, int *setpoint, double *output, uint8_t outputMin, uint8_t outputMax,
                  double Kp, double Ki, double Kd)
 {
   _input = input;
@@ -85,7 +85,7 @@ void AutoPID::setIntegral(double integral)
 {
   _integral = integral;
 }
-void AutoPID::setParameter(double *input, double *setpoint, double *output, double outputMin, double outputMax,
+void AutoPID::setParameter(int *input, int *setpoint, double *output, uint8_t outputMin, uint8_t outputMax,
                   double Kp, double Ki, double Kd)
 {
   _input = input;
