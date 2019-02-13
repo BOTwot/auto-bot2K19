@@ -49,8 +49,8 @@ class shoulder                                             //class for shoulder 
       mtr2 = w;
       pinMode(phaseA, INPUT_PULLUP);
       pinMode(phaseB, INPUT_PULLUP);
-      pinMode(mtr1, OUTPUT);
-      pinMode(mtr2, OUTPUT);
+      pinMode(4, OUTPUT);
+      pinMode(5, OUTPUT);
       kp = Kp;
       ki = Ki;
       kd = Kd;
@@ -63,6 +63,7 @@ class shoulder                                             //class for shoulder 
         op++;
       else if (digitalRead(phaseA) == HIGH && digitalRead(phaseB) == HIGH)
         op--;
+        
     }
     void updateang()                                  //change angle according to reading from encoder
     {
@@ -70,28 +71,32 @@ class shoulder                                             //class for shoulder 
         op = 0;
       if (op <= -22140)
         op = 0;
-      curangle = map(op, -22140, 22140, -360, 360);        //maping angle between -360 to +360
+      curangle = map(op, -22140, 22140, -361, 361);
+      //Serial.println(op);//maping angle between -360 to +360
     }
     void setangle(int x)                                 //function to write angle to motor
     {
-      sangle = x;                                       //loop needed in function
+      sangle = x;
+      Serial.println("in");//loop needed in function
       updateang();
-      if (( curangle >= (x + 2) ||  curangle <= (x - 2)))
-      {
-        flag = 0;
-        last_time = 0;
-        time_flag = 0;
-      }
-      else if (( curangle <= (x + 2) ||  curangle >= (x - 2)) && time_flag != 1)
-      {
-        last_time = millis();
-        time_flag = 1;
-      }
-      if (( curangle <= (x + 2) ||  curangle >= (x - 2))&& (millis() - last_time >= set_delay))
-        flag = 1;
+//      if ( curangle!=x)
+//      {
+//        flag = 0;
+//        last_time = 0;
+//        time_flag = 0;
+//      }
+//      else if (curangle==x && time_flag != 1)
+//      {
+//        last_time = millis();
+//        time_flag = 1;
+//      }
+//      if (curangle==x&& (millis() - last_time >= set_delay))
+//        flag = 1;
       my.run();
-      analogWrite(mtr1, output1);
-      analogWrite(mtr2, output2);
+      Serial.println(output1);
+      //Serial.println(mtr1);
+      analogWrite(4, output1);
+      analogWrite(5, output2);
     }
 
 };
@@ -157,66 +162,102 @@ void motor_initiate()
 void reset_ang()
 {
   flleg.flag = 0;
-  frleg.flag = 0;
-  blleg.flag = 0;
-  brleg.flag = 0;
-  initflag = 1;
+//  frleg.flag = 0;
+//  blleg.flag = 0;
+//  brleg.flag = 0;
+  //initflag = 1;
 }
 void set_all(int fl_s, int fl_k, int fr_s, int fr_k, int br_s, int br_k, int bl_s, int bl_k)
 {
   reset_ang();
-  while (flleg.flag == 1 && frleg.flag == 1 &&  blleg.flag == 1  &&  brleg.flag == 1)
+  while (flleg.flag == 1 )
   {
-    flknee.setangle(fl_k);
-    frknee.setangle(fr_k);
-    blknee.setangle(bl_k);
-    brknee.setangle(br_k);
+    Serial.println("setnangle");
+    //flknee.setangle(fl_k);
+//    frknee.setangle(fr_k);
+//    blknee.setangle(bl_k);
+//    brknee.setangle(br_k);
     flleg.setangle(fl_s);
-    frleg.setangle(fr_s);
-    blleg.setangle(bl_s);
-    brleg.setangle(br_s);
+//    frleg.setangle(fr_s);
+//    blleg.setangle(bl_s);
+//    brleg.setangle(br_s);
   }
 }
 void stand()                               //random test function
 {
   set_all(encoder_initangle, servo_initangle, encoder_initangle, servo_initangle, encoder_initangle, servo_initangle, encoder_initangle, servo_initangle);
 }
-void cycle1()                               //random test function
+//void cycle1()                               //random test function
+//{
+//  set_all(encoder_finangle, servo_initangle, encoder_initangle, servo_initangle, (encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle);
+//}
+//void cycle2()                               //random test function
+//{
+//  set_all((encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle, encoder_initangle, servo_initangle, encoder_finangle, servo_finangle);
+//}
+//void cycle3()                               //random test function
+//{
+//  set_all(encoder_initangle, servo_initangle, encoder_finangle, servo_finangle, encoder_initangle, servo_finangle, encoder_finangle, servo_initangle);
+//}
+//void cycle4()                               //random test function
+//{
+//  set_all(encoder_initangle, servo_finangle, encoder_finangle, servo_initangle, encoder_finangle, servo_finangle, (encoder_finangle / 2), servo_initangle);
+//}
+//void cycle5()
+//{
+//  set_all(encoder_finangle, servo_finangle, encoder_finangle / 2, servo_initangle, encoder_finangle, servo_initangle, encoder_initangle, servo_initangle);
+//}
+void set_all(int i)
 {
-  set_all(encoder_finangle, servo_initangle, encoder_initangle, servo_initangle, (encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle);
+  reset_ang();
+  while (flleg.curangle != i )
+  {
+    flleg.setangle(i);
+  }
 }
-void cycle2()                               //random test function
+void cycle1(int i)                               //random test function
 {
-  set_all((encoder_finangle / 2), servo_initangle, encoder_initangle, servo_finangle, encoder_initangle, servo_initangle, encoder_finangle, servo_finangle);
+  Serial.println("walk1");
+  set_all(i);
 }
-void cycle3()                               //random test function
+void cycle2(int i)                               //random test function
 {
-  set_all(encoder_initangle, servo_initangle, encoder_finangle, servo_finangle, encoder_initangle, servo_finangle, encoder_finangle, servo_initangle);
+  //Serial.println("walk2");
+  set_all(i);
 }
-void cycle4()                               //random test function
+void cycle3(int i)                               //random test function
 {
-  set_all(encoder_initangle, servo_finangle, encoder_finangle, servo_initangle, encoder_finangle, servo_finangle, (encoder_finangle / 2), servo_initangle);
+  set_all(i);
 }
-void cycle5()
+void cycle4(int i)                               //random test function
 {
-  set_all(encoder_finangle, servo_finangle, encoder_finangle / 2, servo_initangle, encoder_finangle, servo_initangle, encoder_initangle, servo_initangle);
+  set_all(i);
 }
-void walk()
+void cycle5(int i)
 {
-  cycle1();
-  cycle2();
-  cycle3();
-  cycle4();
-  cycle5();
+  set_all(i);
+}
+void walk(int i)
+{
+  Serial.println("called walk");
+  cycle1(i);
+  cycle2(i);
+  cycle3(i);
+  cycle4(i);
+  cycle5(i);
 }
 void loop()
 {
-  if (digitalRead(activate_pin) == HIGH)
-    servo_initiate();
-  else if (digitalRead(activate_pin) == LOW && initflag == 0)
-    motor_initiate();
-  else if (digitalRead(walkpin) == LOW)
-    walk();
-  else if (digitalRead(activate_pin) == LOW && initflag == 1)
-    stand();
+//  Serial.println(flleg.op);
+//  if (digitalRead(activate_pin) == HIGH)
+//    servo_initiate();
+//  else if (digitalRead(activate_pin) == LOW && initflag == 0)
+//    motor_initiate();
+//  else if (digitalRead(walkpin) == LOW)
+  for(int i=0;i<=360;i++)
+  {
+    walk(i);
+  }
+//  else if (digitalRead(activate_pin) == LOW && initflag == 1)
+//    stand();
 }

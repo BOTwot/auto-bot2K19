@@ -3,9 +3,9 @@
 #define flleg_phaseB 22
 #define flleg_mtr1 4
 #define flleg_mtr2 5
-#define flleg_kp 100
-#define flleg_ki 100
-#define flleg_kd 100
+#define flleg_kp 5
+#define flleg_ki 0
+#define flleg_kd 0
 #define frleg_phaseA 3
 #define frleg_phaseB 23
 #define frleg_mtr1 6
@@ -37,8 +37,8 @@
 //general
 #define servo_initangle 0
 #define servo_finangle 30
-#define encoder_initangle 0
-#define encoder_finangle 60
+#define encoder_initangle 100
+#define encoder_finangle 200
 #define activate_pin 21
 #define set_delay 300
 #define x1 40
