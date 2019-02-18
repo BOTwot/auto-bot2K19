@@ -22,7 +22,7 @@ class knee                                           //class for elbows of legs
       servoS.attach(pintoS);
       corrS = 0.0;
     }
-    shoulder(int pintoS, int valS)                         //to attach pin to knee with non-zero error
+    knee(int pintoS, int valS)                         //to attach pin to knee with non-zero error
     {
       servoS.attach(pintoS);
       corrS = valS;

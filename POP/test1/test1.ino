@@ -45,11 +45,11 @@ void get_dirbr()                                    //getting direction of rotat
 }
 void updateangfl()                                  //change angle according to reading from encoder
 {
-  if (opfl > 22140)
+  if (opfl > 1384)
     opfl = 0;
-  if (opfl < -22140)
+  if (opfl < -1384)
     opfl = 0;
-  curanglefl = map(opfl, -22140, 22140, -361, 361);
+  curanglefl = map(opfl, -1384, 1384, -361, 361);
   //Serial.println(curangle);//maping angle between -360 to +360
 }
 void updateangfr()                                  //change angle according to reading from encoder
@@ -149,15 +149,15 @@ void setup() {
 }
 
 void loop() {
-
+  Serial.println(opfl);
   // put your main code here, to run repeatedly:
-  for (int i = 0; i <= 360; i++)
-  {
-    setanglefl(i);
-    setanglefr(i);
-    setanglebl(i);
-    setanglebr(i);
-  }
+  //for (int i = 0; i <= 360; i++)
+  //{
+  //  setanglefl(i);
+//    setanglefr(i);
+//    setanglebl(i);
+//    setanglebr(i);
+  //}
 
 
 }
